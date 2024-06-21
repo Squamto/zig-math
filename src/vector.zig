@@ -60,6 +60,10 @@ pub fn VecN(comptime T: type, comptime N: comptime_int) type {
             return .{ .data = lhs.data - rhs.data };
         }
 
+        pub fn mul(lhs: Self, rhs: Self) Self {
+            return .{ .data = lhs.data * rhs.data };
+        }
+
         pub fn dot(lhs: Self, rhs: Self) T {
             return @reduce(.Add, lhs.data * rhs.data);
         }
