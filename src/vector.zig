@@ -87,6 +87,10 @@ pub fn VecN(comptime T: type, comptime N: comptime_int) type {
             return std.math.sqrt(self.lenSq());
         }
 
+        pub fn normalize(self: Self) Self {
+            return self.scale(1.0 / self.len());
+        }
+
         pub fn format(
             self: Self,
             comptime fmt: []const u8,
