@@ -17,3 +17,7 @@ pub fn degToRad(value: anytype) @TypeOf(value) {
 pub fn radToDeg(value: anytype) @TypeOf(value) {
     return value / (2.0 * std.math.pi) * 360.0;
 }
+
+test "Vector" {
+    _ = VecN;
+}

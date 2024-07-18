@@ -38,12 +38,12 @@ pub fn VecN(comptime T: type, comptime N: comptime_int) type {
             return .{ .data = values };
         }
 
-        pub fn extend(other: VecN(T, N - 1)) Self {
-            var data: [N]T = undefined;
-            for (0..N - 1) |i|
+        pub fn from_lower(other: anytype) Self {
+            const other_t = @TypeOf(other);
+            var data: [N]T = .{0} ** N;
+            for (0..other_t.size) |i| {
                 data[i] = other.data[i];
-
-            data[N - 1] = 0;
+            }
             return init(data);
         }
 
@@ -133,5 +133,16 @@ pub fn VecN(comptime T: type, comptime N: comptime_int) type {
             try std.testing.expectApproxEqRel(@as(f32, 7.0), v3.data[1], std.math.floatEps(f32));
             try std.testing.expectApproxEqRel(@as(f32, 9.0), v3.data[2], std.math.floatEps(f32));
         }
+
+        test from_lower {
+            const a = Vec2.splat(1);
+            const b = Vec4.from_lower(a);
+
+            try std.testing.expectEqual(Vec4{ .data = .{ 1, 1, 0, 0 } }, b);
+        }
     };
+}
+
+test VecN {
+    std.testing.refAllDecls(Vec4);
 }
