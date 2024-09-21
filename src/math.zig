@@ -10,6 +10,8 @@ pub const QuadMatrix = @import("matrix.zig").QuadMatrix;
 
 pub const Matrix4 = QuadMatrix(f32, 4);
 
+pub const Quaternion = @import("quaternion.zig").Quat4;
+
 pub fn degToRad(value: anytype) @TypeOf(value) {
     return value / 360.0 * 2.0 * std.math.pi;
 }
@@ -20,4 +22,12 @@ pub fn radToDeg(value: anytype) @TypeOf(value) {
 
 test "Vector" {
     _ = VecN;
+}
+
+test "QuadMatrix" {
+    _ = QuadMatrix;
+}
+
+test "Quaternion" {
+    _ = Quaternion;
 }
