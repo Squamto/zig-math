@@ -55,7 +55,7 @@ pub const Quat4 = struct {
         return result.normalize();
     }
 
-    pub fn form_euler(angles: Vec3) Quat4 {
+    pub fn from_euler(angles: Vec3) Quat4 {
         const half_x = angles.x() / 2.0;
         const half_y = angles.y() / 2.0;
         const half_z = angles.z() / 2.0;
@@ -77,7 +77,7 @@ pub const Quat4 = struct {
 
     pub fn rotate_vector(self: Quat4, vec: Vec3) Vec3 {
         const qvec = Quat4.from_vec(vec);
-        const result = self.mul(qvec).mul(self.conjugate());
+        const result = self.conjugate().mul(qvec).mul(self);
         return Vec3.init(.{ result.data[0], result.data[1], result.data[2] });
     }
 
@@ -211,9 +211,9 @@ pub const Quat4 = struct {
         try std.testing.expectApproxEqAbs(expected.data[3], quat.data[3], epsilon);
     }
 
-    test form_euler {
+    test from_euler {
         const epsilon = std.math.floatEps(f32);
-        var quat = Quat4.form_euler(Vec3.init(.{ 0.0, 0.0, 0.0 }));
+        var quat = Quat4.from_euler(Vec3.init(.{ 0.0, 0.0, 0.0 }));
         var expected = Vec4.init(.{ 0.0, 0.0, 0.0, 1.0 });
 
         try std.testing.expectApproxEqAbs(expected.data[0], quat.data[0], epsilon);
@@ -221,7 +221,7 @@ pub const Quat4 = struct {
         try std.testing.expectApproxEqAbs(expected.data[2], quat.data[2], epsilon);
         try std.testing.expectApproxEqAbs(expected.data[3], quat.data[3], epsilon);
 
-        quat = Quat4.form_euler(Vec3.init(.{ 0.0, 0.0, std.math.pi }));
+        quat = Quat4.from_euler(Vec3.init(.{ 0.0, 0.0, std.math.pi }));
         expected = Vec4.init(.{ 0.0, 0.0, 1.0, 0.0 });
 
         try std.testing.expectApproxEqAbs(expected.data[0], quat.data[0], epsilon);
@@ -229,7 +229,7 @@ pub const Quat4 = struct {
         try std.testing.expectApproxEqAbs(expected.data[2], quat.data[2], epsilon);
         try std.testing.expectApproxEqAbs(expected.data[3], quat.data[3], epsilon);
 
-        quat = Quat4.form_euler(Vec3.init(.{ 0.0, std.math.pi, 0.0 }));
+        quat = Quat4.from_euler(Vec3.init(.{ 0.0, std.math.pi, 0.0 }));
         expected = Vec4.init(.{ 0.0, 1.0, 0.0, 0.0 });
 
         try std.testing.expectApproxEqAbs(expected.data[0], quat.data[0], epsilon);
@@ -237,7 +237,7 @@ pub const Quat4 = struct {
         try std.testing.expectApproxEqAbs(expected.data[2], quat.data[2], epsilon);
         try std.testing.expectApproxEqAbs(expected.data[3], quat.data[3], epsilon);
 
-        quat = Quat4.form_euler(Vec3.init(.{ std.math.pi, 0.0, 0.0 }));
+        quat = Quat4.from_euler(Vec3.init(.{ std.math.pi, 0.0, 0.0 }));
         expected = Vec4.init(.{ 1.0, 0.0, 0.0, 0.0 });
 
         try std.testing.expectApproxEqAbs(expected.data[0], quat.data[0], epsilon);
@@ -248,9 +248,9 @@ pub const Quat4 = struct {
 
     test rotate_vector {
         const epsilon = std.math.floatEps(f32);
-        const quat = Quat4.form_euler(Vec3.init(.{ 0.0, 0.0, std.math.pi }));
+        const quat = Quat4.from_euler(Vec3.init(.{ 0.0, 0.0, std.math.pi / 2.0 }));
         const vec = Vec3.init(.{ 1.0, 0.0, 0.0 });
-        const expected = Vec3.init(.{ -1.0, 0.0, 0.0 });
+        const expected = Vec3.init(.{ 0.0, -1.0, 0.0 });
 
         const result = quat.rotate_vector(vec);
 
@@ -261,7 +261,7 @@ pub const Quat4 = struct {
 
     test to_matrix {
         const epsilon = std.math.floatEps(f32);
-        const quat = Quat4.form_euler(Vec3.init(.{ 0.0, 0.0, std.math.pi }));
+        const quat = Quat4.from_euler(Vec3.init(.{ 0.0, 0.0, std.math.pi }));
         var expected = Mat4.identity(1.0);
         expected.set(0, 0, -1.0);
         expected.set(1, 1, -1.0);
